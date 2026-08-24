@@ -20,12 +20,15 @@ There is **no `/register`** endpoint. Demo users are seeded by `scripts/seed_dem
 | POST | `/api/auth/login` | public | Accept email+password, return JWT + role |
 | GET | `/api/auth/me` | any | Return current user info + role |
 
-**Seeded demo accounts (known demo credentials):**
-- admin/government
-- training provider
-- trainee
+**Seeded demo accounts (demonstration-only credentials, do not treat as production):**
 
-Exact demo emails/passwords will be defined in code on Day 3 and listed in the README/demo.
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin/Government | `admin@sih.gov.in` | `demo123` |
+| Training provider | `provider@sih.gov.in` | `demo123` |
+| Trainee | `trainee@sih.gov.in` | `demo123` |
+
+All three are created by `scripts/seed_demo_data.py`; the JWT signing secret is never committed (see `backend/app/config.py`).
 
 ---
 

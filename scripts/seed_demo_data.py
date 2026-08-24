@@ -12,11 +12,11 @@ and docs/PROJECT.md for the demo-data / honesty policy.
 """
 
 from datetime import date, timedelta
-import hashlib
 
 from sqlalchemy.orm import Session
 
 from backend.app.config import DATABASE_URL
+from backend.app.security import hash_password
 from backend.app.database.models import (
     Employment,
     JobDemand,
@@ -37,15 +37,6 @@ DEMO_ADMIN_EMAIL = "admin@sih.gov.in"
 DEMO_PROVIDER_EMAIL = "provider@sih.gov.in"
 DEMO_TRAINEE_EMAIL = "trainee@sih.gov.in"
 DEMO_PASSWORD = "demo123"
-
-
-def hash_password(password: str) -> str:
-    """PBKDF2-SHA256 hash (Python stdlib only, no extra dependency).
-
-    The Day 3 login layer must verify passwords with the same algorithm.
-    """
-    salt = b"sih26135-demo-salt"
-    return hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100_000).hex()
 
 # ---------------------------------------------------------------------------
 # Synthetic catalog: skills, providers, programmes, trainees

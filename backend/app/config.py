@@ -15,6 +15,7 @@ Layout used to resolve paths:
         scripts/
 """
 
+import secrets
 from pathlib import Path
 import os
 
@@ -41,8 +42,11 @@ DATABASE_URL = os.getenv(
     f"sqlite:///{DATABASE_FILE.as_posix()}",
 )
 
-# JWT signing secret for the auth layer (Day 3). Demo default, not for production.
-SECRET_KEY = os.getenv("SECRET_KEY", "sih26135-demo-secret-change-in-production")
+# JWT signing secret for the auth layer (Day 3).
+# No real secret is committed or hard-coded here: if SECRET_KEY is not provided
+# in the environment, a random one is generated for this process. Tokens issued
+# before a restart are then invalidated, which is fine for the demo.
+SECRET_KEY = os.getenv("SECRET_KEY") or secrets.token_urlsafe(48)
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "480"))
 

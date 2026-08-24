@@ -23,6 +23,16 @@ A Skilling Intelligence Platform that connects **training**, **skills**, **emplo
 
 Demo accounts are **seeded** into the database. The prototype does **not** implement public user registration.
 
+### Demo logins (prototype only — not production credentials)
+
+| Role | Email | Password |
+| --- | --- | --- |
+| Admin / Government | `admin@sih.gov.in` | `demo123` |
+| Training Provider | `provider@sih.gov.in` | `demo123` |
+| Trainee | `trainee@sih.gov.in` | `demo123` |
+
+> **These are demonstration-only credentials** for the seeded prototype database (`scripts/seed_demo_data.py`). They are **not** valid production credentials, and the secret protecting JWT signing is never committed to the repository (see `backend/app/config.py` and `.env.example`).
+
 ---
 
 ## Technology stack
