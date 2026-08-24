@@ -1,0 +1,89 @@
+# API.md — SIH26135 Planned Endpoint Contract
+
+> Prototype API contract. Endpoints and request/response shapes are agreed here before implementation so frontend and backend stay aligned. Subject to refinement during building.
+
+## 1. Conventions
+
+- Base URL: `http://localhost:8000`
+- All payloads are **JSON**; validation by Pydantic.
+- Auth: JWT `/login` returns a token; protected routes require `Authorization: Bearer <token>`.
+- Role guard (RBAC): `admin`, `provider`, `trainee`. Only `admin` (Government) may access dashboard/analytics endpoints.
+
+---
+
+## 2. Auth (seeded accounts, no public registration)
+
+There is **no `/register`** endpoint. Demo users are seeded by `scripts/seed_demo_data.py`.
+
+| Method | Path | Auth | Description |
+| --- | --- | --- | --- |
+| POST | `/api/auth/login` | public | Accept email+password, return JWT + role |
+| GET | `/api/auth/me` | any | Return current user info + role |
+
+**Seeded demo accounts (known demo credentials):**
+- admin/government
+- training provider
+- trainee
+
+Exact demo emails/passwords will be defined in code on Day 3 and listed in the README/demo.
+
+---
+
+## 3. Trainee domain (minimal CRUD)
+
+| Method | Path | Auth (role) | Description |
+| --- | --- | --- | --- |
+| GET | `/api/trainees` | admin, provider | List trainees |
+| GET | `/api/trainees/{id}` | admin, provider, trainee(own) | Trainee detail (profile, skills, education) |
+| POST | `/api/trainees` | admin, provider | Create trainee (and linked User) |
+| PATCH | `/api/trainees/{id}` | admin, trainee(own) | Update trainee profile |
+| PUT | `/api/trainees/{id}/skills` | admin, trainee(own) | Set trainee skills |
+| PUT | `/api/trainees/{id}/education` | admin, trainee(own) | Set education level |
+
+---
+
+## 4. Training domain (minimal)
+
+| Method | Path | Auth (role) | Description |
+| --- | --- | --- | --- |
+| GET | `/api/providers` | admin | List providers |
+| GET | `/api/programs` | admin, provider(view own) | List training programmes |
+| GET | `/api/programs/{id}` | admin, provider, trainee | Programme + skills taught |
+| POST | `/api/programs` | provider, admin | Create programme |
+| POST | `/api/programs/{id}/skills` | provider, admin | Attach skills taught |
+| POST | `/api/programs/{id}/enroll` | provider, admin | Enroll trainee → programme |
+| PATCH | `/api/enrollments/{id}` | provider, admin | Update completion/certification status |
+
+---
+
+## 5. Employment domain
+
+| Method | Path | Auth (role) | Description |
+| --- | --- | --- | --- |
+| GET | `/api/employment` | admin, provider | List employment records (history) |
+| GET | `/api/trainees/{id}/employment` | admin, provider, trainee(own) | Trainee employment history |
+| POST | `/api/employment` | admin, provider | Record employment (status, role, industry, salary, start_date, still_employed) |
+| PATCH | `/api/employment/{id}` | admin, provider, trainee(own) | Update employment / retention status |
+
+---
+
+## 6. Analytics & dashboard (read-only; admin/government only)
+
+Formulas per `docs/DATABASE.md`.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| GET | `/api/analytics/employment` | Completion, employment, relevant-employment, retention rates (overall + per program) |
+| GET | `/api/analytics/skill-gap` | High-demand/low-supply skills; district-wise gaps |
+| GET | `/api/analytics/program-impact` | Per-program outcomes; high/low performing programmes |
+| GET | `/api/dashboard/summary` | Consolidated headline numbers for the Government dashboard |
+
+Query params (planned): `district`, `program_id`, `from_date`, `to_date`.
+
+---
+
+## 7. Non-goals
+
+- No `/register`, no public signup.
+- No real external integrations.
+- Analytics/dashboard endpoints are **strictly read-only** (no mutation).

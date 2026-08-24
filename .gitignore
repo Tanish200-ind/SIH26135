@@ -1,0 +1,35 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# ---- Backend secrets / env ----
+.env
+.env.*
+!.env.example
+
+# ---- Database (generated demo DB; regenerate via seed script) ----
+*.db
+*.sqlite
+*.sqlite3
+data/processed/*.db
+
+# ---- Node / React ----
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+*.log
+
+# ---- OS / editor ----
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
