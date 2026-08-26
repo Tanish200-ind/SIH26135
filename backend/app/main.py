@@ -1,6 +1,7 @@
 """FastAPI application entry point for the SIH26135 prototype.
 
-Day 3 wires the auth + minimal read routes into a single app. Runs with
+Day 3 wires the auth + minimal read routes into a single app. Day 4 adds the
+read-only analytics endpoints. Runs with
 ``uvicorn backend.app.main:app`` from the project root.
 """
 
@@ -10,7 +11,7 @@ from fastapi import FastAPI
 
 from backend.app.config import APP_NAME, DEBUG
 from backend.app.database.session import engine, init_db
-from backend.app.routes import auth, employment, trainees, training
+from backend.app.routes import analytics, auth, employment, trainees, training
 
 
 @asynccontextmanager
@@ -24,7 +25,7 @@ async def lifespan(_app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(
         title=APP_NAME,
-        version="0.3.0",
+        version="0.4.0",
         debug=DEBUG,
         lifespan=lifespan,
     )
@@ -37,6 +38,7 @@ def create_app() -> FastAPI:
     app.include_router(trainees.router, prefix="/api")
     app.include_router(training.router, prefix="/api")
     app.include_router(employment.router, prefix="/api")
+    app.include_router(analytics.router, prefix="/api")
 
     return app
 
