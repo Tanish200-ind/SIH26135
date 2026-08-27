@@ -1,6 +1,156 @@
+import { useState } from "react";
 import { api } from "../api.js";
 import { useApi, accessToken, fmtInt } from "../hooks.js";
 import { Loading, ErrorState, Section } from "../components/PageKit.jsx";
+
+// Provider workflow: create a new training programme. The backend resolves
+// ownership from the JWT — the form never sends a provider id.
+function AddProgramForm({ onCreated }) {
+  const [open, setOpen] = useState(false);
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [weeks, setWeeks] = useState("8");
+  const [progStatus, setProgStatus] = useState("active");
+  const [selected, setSelected] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(null);
+
+  const skills = useApi(() => api.skills(accessToken()));
+
+  function toggleSkill(id) {
+    setSelected((cur) =>
+      cur.includes(id) ? cur.filter((x) => x !== id) : [...cur, id]
+    );
+  }
+
+  async function submit(e) {
+    e.preventDefault();
+    setError(null);
+    if (!name.trim()) return setError("Programme name is required.");
+    if (!selected.length) return setError("Select at least one skill taught.");
+    const weeksNum = Number.parseInt(weeks, 10);
+    if (!Number.isFinite(weeksNum) || weeksNum < 1)
+      return setError("Duration must be at least 1 week.");
+    setBusy(true);
+    try {
+      await api.createProgram(
+        {
+          name: name.trim(),
+          description: description.trim(),
+          duration_weeks: weeksNum,
+          status: progStatus,
+          skill_ids: selected,
+        },
+        accessToken()
+      );
+      setName("");
+      setDescription("");
+      setWeeks("8");
+      setSelected([]);
+      setProgStatus("active");
+      setOpen(false);
+      onCreated && onCreated();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <Section
+      title="Create a programme"
+      meta="Skills taught come from the official skill catalog"
+    >
+      {!open ? (
+        <button type="button" className="btn btn-primary" onClick={() => setOpen(true)}>
+          + Add Program
+        </button>
+      ) : (
+        <form className="wf-form" onSubmit={submit}>
+          <div className="form-grid">
+            <label className="field">
+              <span>Programme name</span>
+              <input
+                className="wf-input"
+                value={name}
+                maxLength={200}
+                placeholder="e.g. Drone Pilot Basics"
+                onChange={(e) => setName(e.target.value)}
+              />
+            </label>
+            <label className="form-split">
+              <span className="form-half">
+                <span>Duration (weeks)</span>
+                <input
+                  className="wf-input"
+                  type="number"
+                  min={1}
+                  max={200}
+                  value={weeks}
+                  onChange={(e) => setWeeks(e.target.value)}
+                />
+              </span>
+              <span className="form-half">
+                <span>Status</span>
+                <select
+                  className="wf-select"
+                  value={progStatus}
+                  onChange={(e) => setProgStatus(e.target.value)}
+                >
+                  <option value="active">active</option>
+                  <option value="closed">closed</option>
+                </select>
+              </span>
+            </label>
+            <label className="form-grid">
+              <span>Description (optional)</span>
+              <textarea
+                className="wf-input"
+                rows={2}
+                value={description}
+                placeholder="Short summary shown to trainees"
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </label>
+          </div>
+
+          <div className="skill-picker">
+            <span className="picker-label">Skills taught</span>
+            {skills.loading && <span className="muted">Loading skills…</span>}
+            {skills.error && <span className="wf-error">Could not load skills: {skills.error}</span>}
+            <div className="chips">
+              {(skills.data || []).map((s) => (
+                <button
+                  type="button"
+                  key={s.id}
+                  className={`chip ${selected.includes(s.id) ? "chip-on" : ""}`}
+                  onClick={() => toggleSkill(s.id)}
+                >
+                  {s.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {error && <p className="wf-error">{error}</p>}
+          <div className="form-actions">
+            <button type="submit" className="btn btn-primary" disabled={busy}>
+              {busy ? "Creating…" : "Create programme"}
+            </button>
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={() => { setOpen(false); setError(null); }}
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+      )}
+    </Section>
+  );
+}
 
 // Training-provider role view: only read endpoints the provider may access
 // (own programmes, the trainee roster, and the employment table).
@@ -17,6 +167,8 @@ export default function ProviderOverview() {
 
   return (
     <div className="stack">
+      <AddProgramForm onCreated={() => programs.refresh()} />
+
       <Section title="Your programmes" meta={`${(programs.data || []).length} programmes`}>
         <div className="table-wrap">
           <table className="table">

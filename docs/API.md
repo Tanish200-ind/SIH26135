@@ -45,17 +45,20 @@ All three are created by `scripts/seed_demo_data.py`; the JWT signing secret is 
 
 ---
 
-## 4. Training domain (minimal)
+## 4. Training domain
 
 | Method | Path | Auth (role) | Description |
 | --- | --- | --- | --- |
 | GET | `/api/providers` | admin | List providers |
 | GET | `/api/programs` | admin, provider(view own) | List training programmes |
+| **POST** | `/api/programs` | **provider** | Create programme — provider identity always resolved server-side from the JWT (client-supplied ownership is ignored); `skill_ids` must reference `/api/skills`; body: `{name, description?, duration_weeks, status(active\|closed), skill_ids}` |
+| GET | `/api/skills` | admin, provider, trainee | Skill catalog (used by the add-programme form) |
+| GET | `/api/programs/available` | **trainee** | All programmes annotated with the caller's enrollment state (`enrolled`, `enrollment_status`); active listed first |
 | GET | `/api/programs/{id}` | admin, provider, trainee | Programme + skills taught |
-| POST | `/api/programs` | provider, admin | Create programme |
-| POST | `/api/programs/{id}/skills` | provider, admin | Attach skills taught |
-| POST | `/api/programs/{id}/enroll` | provider, admin | Enroll trainee → programme |
-| PATCH | `/api/enrollments/{id}` | provider, admin | Update completion/certification status |
+| GET | `/api/trainees/me/enrollments` | **trainee** | The authenticated trainee's own enrollments |
+| **POST** | `/api/trainees/me/enrollments` | **trainee** | Self-enrollment `{program_id}`; closed programme or duplicate ⇒ 409, unknown programme ⇒ 404 |
+
+Not implemented in the prototype (planned-only): `POST /api/programs/{id}/skills`, `POST /api/programs/{id}/enroll`, `PATCH /api/enrollments/{id}`. Skills are attached at creation time; enrollment is self-service (trainees enrol themselves).
 
 ---
 

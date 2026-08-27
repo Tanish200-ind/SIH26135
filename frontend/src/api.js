@@ -45,10 +45,23 @@ export const api = {
   traineeSelf: (token) => request("/trainees/me", { token }),
   traineeEmployment: (id, token) => request(`/trainees/${id}/employment`, { token }),
 
-  // Training domain (read)
+  // Training domain (read + provider create)
   providers: (token) => request("/providers", { token }),
   programs: (token) => request("/programs", { token }),
   employment: (token) => request("/employment", { token }),
+  skills: (token) => request("/skills", { token }),
+  // Provider: create a programme (ownership resolved server-side from JWT)
+  createProgram: (payload, token) =>
+    request("/programs", { method: "POST", body: payload, token }),
+  // Trainee: catalogue + self-service enrollment
+  availablePrograms: (token) => request("/programs/available", { token }),
+  myEnrollments: (token) => request("/trainees/me/enrollments", { token }),
+  enroll: (programId, token) =>
+    request("/trainees/me/enrollments", {
+      method: "POST",
+      body: { program_id: programId },
+      token,
+    }),
 
   // Analytics (admin only)
   employmentAnalytics: (token) => request("/analytics/employment", { token }),

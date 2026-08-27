@@ -1,0 +1,147 @@
+/* Workflow styles (provider add-program form, trainee enrollment) — additive
+   only; reuses the app's existing variables and component classes. */
+
+.wf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.form-split {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-half {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+label > span:first-child,
+.picker-label {
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.wf-input {
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  padding: 8px 10px;
+  border: 1px solid var(--line-strong, #c8ccd4);
+  border-radius: 8px;
+  background: var(--panel, #fff);
+}
+
+.wf-input:focus {
+  outline: 2px solid var(--accent, #1f5fbf);
+  outline-offset: 1px;
+}
+
+textarea.wf-input {
+  resize: vertical;
+}
+
+.skill-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.chip {
+  font: inherit;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line-strong, #c8ccd4);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+.chip:hover {
+  border-color: var(--accent, #1f5fbf);
+}
+
+.chip-on {
+  background: var(--accent, #1f5fbf);
+  border-color: var(--accent, #1f5fbf);
+  color: #fff;
+}
+
+.form-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.wf-error {
+  color: var(--danger, #b42318);
+  font-size: 13px;
+  margin: 0;
+}
+
+.wf-flash {
+  color: var(--ok, #067647);
+  font-size: 13px;
+  margin: 0 0 4px;
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: 13px;
+}
+
+/* Trainee catalogue rows */
+.catalog-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.catalog-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line, #e5e7eb);
+}
+
+.catalog-item:last-child {
+  border-bottom: none;
+}
+
+.catalog-main {
+  min-width: 0;
+}
+
+.catalog-action {
+  flex-shrink: 0;
+}
+
+/* Extra status tags (enrollment states, closed programmes) */
+.tag-info {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.tag-muted {
+  background: transparent;
+  color: inherit;
+  opacity: 0.65;
+}
