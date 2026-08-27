@@ -206,6 +206,32 @@ def test_trainee_cannot_view_others_employment_history(api):
     assert resp.status_code == 403
 
 
+def test_trainee_can_read_own_profile_via_me(api):
+    """GET /api/trainees/me returns the authenticated trainee's own profile.
+
+    Added in Day 5 to support the trainee role view (the JWT carries the User
+    id, not the linked Trainee id).
+    """
+    client, db = api
+    token = _login(client, DEMO_TRAINEE_EMAIL)["access_token"]
+    trainee_user = db.query(User).filter(User.email == DEMO_TRAINEE_EMAIL).one()
+    own = db.query(Trainee).filter(Trainee.user_id == trainee_user.id).one()
+
+    resp = client.get("/api/trainees/me", headers=_headers(token))
+    assert resp.status_code == 200
+    assert resp.json()["id"] == own.id
+    assert resp.json()["district"] == own.district
+
+
+def test_me_returns_404_for_non_trainee(api):
+    """Users without a linked trainee profile get a clear 404 from /me."""
+    client, _ = api
+    for email in (DEMO_ADMIN_EMAIL, DEMO_PROVIDER_EMAIL):
+        token = _login(client, email)["access_token"]
+        resp = client.get("/api/trainees/me", headers=_headers(token))
+        assert resp.status_code == 404
+
+
 # ---------------------------------------------------------------------------
 # Basic protected read endpoints
 # ---------------------------------------------------------------------------

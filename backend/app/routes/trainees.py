@@ -7,7 +7,7 @@ from backend.app.database.models import Trainee, User
 from backend.app.database.session import get_db
 from backend.app.schemas.employment import EmploymentOut
 from backend.app.schemas.trainees import TraineeOut
-from backend.app.security import require_roles
+from backend.app.security import get_current_user, require_roles
 
 router = APIRouter(prefix="/trainees", tags=["trainees"])
 
@@ -40,6 +40,27 @@ def list_trainees(
     db: Session = Depends(get_db),
 ) -> list[TraineeOut]:
     return [_serialize(t) for t in db.query(Trainee).order_by(Trainee.id).all()]
+
+
+@router.get("/me", response_model=TraineeOut)
+def get_own_trainee(
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+) -> TraineeOut:
+    """Resolve and return the authenticated trainee's own profile.
+
+    Helper for the trainee role view (docs/API.md §3): the JWT carries the User
+    id, not the linked Trainee id, so this maps user -> own trainee record.
+    Read-only and RBAC-guarded (trainee, or admin for any resolution).
+    """
+    query = db.query(Trainee).filter(Trainee.user_id == current_user.id)
+    trainee = query.first()
+    if trainee is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No trainee profile linked to this account",
+        )
+    return _serialize(trainee)
 
 
 @router.get("/{trainee_id}", response_model=TraineeOut)
