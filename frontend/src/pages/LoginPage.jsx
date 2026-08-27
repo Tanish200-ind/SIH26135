@@ -87,7 +87,7 @@ export default function LoginPage({ onAuthChange }) {
           </form>
 
           <div className="demo-row">
-            <span className="demo-label">Demo demo accounts</span>
+            <span className="demo-label">Demo accounts</span>
             <div className="demo-buttons">
               {DEMO.map((d) => (
                 <button

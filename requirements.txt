@@ -1,0 +1,14 @@
+# SIH26135 — Python dependencies (Day 6 verified set)
+# Install:  python -m pip install -r requirements.txt
+
+# --- Runtime ---
+fastapi==0.141.1
+uvicorn==0.52.4
+SQLAlchemy==2.0.52
+PyJWT==2.13.0
+
+# --- Tests (backend test suite) ---
+httpx==0.28.1        # FastAPI TestClient transport
+pytest==9.1.1
+
+# Optional: python-dotenv enables .env loading in backend/app/config.py

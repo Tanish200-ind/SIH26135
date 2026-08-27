@@ -12,6 +12,9 @@ export default function TopBar({ title, kicker }) {
         <h1>{title}</h1>
       </div>
       <div className="topbar-meta">
+        <span className="pill-demo" title="All figures come from a seeded synthetic dataset">
+          Synthetic demo data
+        </span>
         <span className="role-pill">{ROLE_LABEL[role] || role}</span>
         <span className="topbar-email">{email}</span>
       </div>

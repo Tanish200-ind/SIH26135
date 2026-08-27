@@ -23,7 +23,8 @@ export default function Layout({ role, onAuthChange, children }) {
         <TopBar title={meta.title} kicker={meta.kicker} />
         <div className="content">{children}</div>
         <footer className="footer">
-          StatAvishkar — statutory demo dashboard · reads live from the seeded SIH26135 database.
+          StatAvishkar prototype · every figure shown here is computed live from a{" "}
+          <strong>synthetic demo dataset</strong> — not real government statistics.
         </footer>
       </div>
     </div>
