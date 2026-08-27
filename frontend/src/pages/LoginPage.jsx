@@ -28,6 +28,10 @@ export default function LoginPage({ onAuthChange }) {
     try {
       const data = await api.login(email.trim(), password);
       saveSession(data);
+      // Land straight on this role's own view instead of "#" ("/"), which
+      // is the admin dashboard and would trip the unavailable-page guard.
+      const ROLE_HOME = { admin: "/", provider: "/overview", trainee: "/my-profile" };
+      window.location.hash = ROLE_HOME[data.role] || "/";
       if (onAuthChange) onAuthChange();
     } catch (err) {
       setError(err.message || "Login failed");

@@ -1,6 +1,6 @@
-import { useReducer } from "react";
-import { Router } from "./router.jsx";
-import { isAuthed, getRole } from "./auth.js";
+import { useEffect, useReducer } from "react";
+import { Router, useLocation } from "./router.jsx";
+import { clearSession, getRole, isAuthed } from "./auth.js";
 import Layout from "./components/Layout.jsx";
 import LoginPage from "./pages/LoginPage.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
@@ -12,9 +12,9 @@ import TraineeViews from "./pages/TraineeViews.jsx";
 
 export default function App() {
   const [, bump] = useReducer((x) => x + 1, 0);
+  const { path } = useLocation();
 
-  if (!isAuthed()) return <LoginPage onAuthChange={bump} />;
-
+  const authed = isAuthed();
   const role = getRole();
 
   // Each route carries: path, element, and the roles allowed to see it.
@@ -27,8 +27,30 @@ export default function App() {
     { path: "/my-profile", element: <TraineeViews />, roles: ["trainee"] },
   ];
 
-  const allowed = routes.filter((r) => r.roles.includes(role));
+  const allowed = authed && role ? routes.filter((r) => r.roles.includes(role)) : [];
   const defaultPath = allowed.length ? allowed[0].path : "/";
+  const allowedPaths = allowed.map((r) => r.path);
+
+  // Landing guard: the "not available for your role" page must never be a
+  // transient landing state. If the current hash is not one of this role's
+  // views (fresh login lands on "#/", or a hash left over from a previous
+  // session of another role), go straight to the role's home view instead.
+  useEffect(() => {
+    if (!authed) return undefined;
+    if (!role) {
+      // Token without a role means a broken/partial session: force re-login.
+      clearSession();
+      bump();
+      return undefined;
+    }
+    if (!allowedPaths.includes(path)) {
+      window.location.hash = defaultPath;
+    }
+    return undefined;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authed, role, path]);
+
+  if (!authed || !role) return <LoginPage onAuthChange={bump} />;
 
   return (
     <Layout role={role} onAuthChange={bump}>
