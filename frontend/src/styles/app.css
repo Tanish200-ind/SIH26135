@@ -327,6 +327,83 @@
   position: relative;
 }
 
+/* Quiet value lines filling the open space of the brand panel. */
+.login-points {
+  max-width: 430px;
+}
+
+.points-lead {
+  margin: 0 0 10px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #7f97a3;
+}
+
+.point {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.09);
+  font-size: 15px;
+  color: #dbe7ee;
+}
+
+.point:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.point-index {
+  min-width: 20px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #4fa895;
+}
+
+/* Abstract column-chart motif rising from the accent strip (pure CSS,
+   echoes the analytics pages without adding imagery). */
+.login-bars {
+  position: absolute;
+  right: 64px;
+  bottom: 4px;
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  pointer-events: none;
+}
+
+.login-bars span {
+  width: 11px;
+  border-radius: 2px 2px 0 0;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.login-bars span:nth-child(1) { height: 22px; }
+.login-bars span:nth-child(2) { height: 44px; }
+.login-bars span:nth-child(3) { height: 30px; }
+.login-bars span:nth-child(4) { height: 66px; background: rgba(46, 165, 139, 0.75); }
+.login-bars span:nth-child(5) { height: 50px; }
+
+.login-meta {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: #77909d;
+}
+
+/* On short or narrow viewports drop the decorative motif and tighten the
+   value lines so the panel stays composed instead of crowded. */
+@media (max-height: 760px), (max-width: 960px) {
+  .login-bars {
+    display: none;
+  }
+
+  .point {
+    padding: 11px 0;
+    font-size: 14px;
+  }
+}
+
 .login-brand::after {
   content: "";
   position: absolute;

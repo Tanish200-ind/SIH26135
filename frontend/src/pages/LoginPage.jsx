@@ -45,10 +45,38 @@ export default function LoginPage({ onAuthChange }) {
       <div className="login-brand">
         <div className="brand-col">
           <div className="brand mark-lg">SA</div>
-          <div className="login-banner">
-            <h1>StatAvishkar</h1>
-            <p className="login-tag">A Skilling Intelligence Platform</p>
+        </div>
+
+        <div className="login-bars" aria-hidden="true">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+
+        <div className="login-points">
+          <p className="points-lead">What this platform does</p>
+          <div className="point">
+            <span className="point-index">01</span>
+            <span>Employment outcomes, programme by programme</span>
           </div>
+          <div className="point">
+            <span className="point-index">02</span>
+            <span>Skill gaps against labour-market demand</span>
+          </div>
+          <div className="point">
+            <span className="point-index">03</span>
+            <span>Side-by-side programme outcome comparison</span>
+          </div>
+        </div>
+
+        <div className="login-banner">
+          <h1>StatAvishkar</h1>
+          <p className="login-tag">A Skilling Intelligence Platform</p>
+          <p className="login-meta">
+            Smart India Hackathon 2026&nbsp;&middot;&nbsp;Problem statement SIH26135&nbsp;&middot;&nbsp;Synthetic demo data
+          </p>
         </div>
       </div>
 
