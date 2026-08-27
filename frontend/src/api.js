@@ -48,6 +48,7 @@ export const api = {
   // Training domain (read)
   providers: (token) => request("/providers", { token }),
   programs: (token) => request("/programs", { token }),
+  employment: (token) => request("/employment", { token }),
 
   // Analytics (admin only)
   employmentAnalytics: (token) => request("/analytics/employment", { token }),

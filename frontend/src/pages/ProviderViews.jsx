@@ -1,5 +1,5 @@
 import { api } from "../api.js";
-import { useApi, accessToken } from "../hooks.js";
+import { useApi, accessToken, fmtInt } from "../hooks.js";
 import { Loading, ErrorState, Section } from "../components/PageKit.jsx";
 
 // Training-provider role view: only read endpoints the provider may access
@@ -73,6 +73,48 @@ export default function ProviderOverview() {
           </div>
         </Section>
       </div>
+
+      <Section
+        title="Employment outcomes"
+        meta={`${(employment.data || []).length} records`}
+      >
+        <div className="table-wrap">
+          <table className="table compact">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th className="num">Trainee</th>
+                <th>Role</th>
+                <th>Industry</th>
+                <th className="num">Salary</th>
+                <th>Started</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(employment.data || []).map((e) => (
+                <tr key={e.id}>
+                  <td>
+                    <span className={`tag ${e.status === "employed" ? "tag-ok" : "tag-warn"}`}>
+                      {e.status}
+                    </span>
+                  </td>
+                  <td className="num">#{e.trainee_id}</td>
+                  <td>{e.job_role || "—"}</td>
+                  <td>{e.industry || "—"}</td>
+                  <td className="num">{e.salary ? `₹${fmtInt(e.salary)}` : "—"}</td>
+                  <td>{e.start_date || "—"}</td>
+                </tr>
+              ))}
+              {(employment.data || []).length === 0 && (
+                <tr>
+                  <td colSpan={6} className="muted">No employment records yet.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+        <p className="micro-note">Synthetic demo data · read-only view.</p>
+      </Section>
     </div>
   );
 }
